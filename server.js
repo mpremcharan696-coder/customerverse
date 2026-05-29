@@ -95,30 +95,62 @@ app.post('/api/ecom/checkout', async (req, res) => {
     return res.status(400).json({ error: 'Invalid checkout payload parameters.' });
   }
 
+  const client = await pool.connect();
   try {
+    await client.query('BEGIN');
+
+    const txId = `TX_CUST_${Date.now()}_${storeId}`;
+    let totalCheckoutAmount = 0;
+
     // Perform transactional stock checks and updates
     for (const item of cart) {
-      const prodRes = await pool.query('SELECT current_stock_level FROM products WHERE id = $1', [item.productId]);
+      const prodRes = await client.query('SELECT current_stock_level, price, cost_price, name FROM products WHERE id = $1', [item.productId]);
       if (prodRes.rows.length === 0) {
-        return res.status(404).json({ error: `Product ID ${item.productId} not found.` });
+        throw new Error(`Product ID ${item.productId} not found.`);
       }
 
-      const currentStock = prodRes.rows[0].current_stock_level;
+      const product = prodRes.rows[0];
+      const currentStock = product.current_stock_level;
       if (currentStock < item.quantity) {
-        return res.status(400).json({ error: `Insufficient stock for product ID ${item.productId}.` });
+        throw new Error(`Insufficient stock for product ID ${item.productId}.`);
       }
+
+      const unitPrice = parseFloat(product.price || 0);
+      const costPrice = parseFloat(product.cost_price || 0);
+      const itemTotal = unitPrice * item.quantity;
+      totalCheckoutAmount += itemTotal;
 
       // Deduct stock levels
-      await pool.query(
+      await client.query(
         'UPDATE products SET current_stock_level = current_stock_level - $1 WHERE id = $2',
         [item.quantity, item.productId]
       );
+
+      // Record transaction
+      const itemTxId = `${txId}_${item.productId}`;
+      await client.query(
+        `INSERT INTO transactions (transaction_id, store_id, product_id, quantity, client_name, amount, method, status, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
+        [itemTxId, storeId, item.productId, item.quantity, buyerName || 'E-Commerce Buyer', itemTotal, method || 'Razorpay', 'COMPLETED']
+      );
+
+      // Record P&L
+      const netMargin = unitPrice > 0 ? ((unitPrice - costPrice) / unitPrice) * 100 : 0;
+      await client.query(
+        `INSERT INTO profit_loss_tracking (transaction_id, cost_price_per_unit, selling_price_per_unit, net_profit_margin, total_expense, total_revenue)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [itemTxId, costPrice, unitPrice, isNaN(netMargin) ? 0 : netMargin, costPrice * item.quantity, itemTotal]
+      );
     }
 
+    await client.query('COMMIT');
     res.status(200).json({ success: true, message: 'Payment verified and order confirmed successfully!' });
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Error executing checkout transaction:', error);
-    res.status(500).json({ error: 'Internal checkout transaction database processing failed.' });
+    res.status(500).json({ error: error.message || 'Internal checkout transaction database processing failed.' });
+  } finally {
+    client.release();
   }
 });
 
