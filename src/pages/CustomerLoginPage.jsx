@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   updateProfile,
+  onAuthStateChanged,
 } from 'firebase/auth'
 import { auth, googleProvider, facebookProvider } from '../firebase'
 import gsap from 'gsap'
