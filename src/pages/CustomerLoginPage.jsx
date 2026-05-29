@@ -220,9 +220,14 @@ export default function CustomerLoginPage() {
     )
   }, [])
 
-  /* ── Redirect if already signed in ── */
+  /* ── Redirect if already signed in (listening to real state changes on mount) ── */
   useEffect(() => {
-    if (auth.currentUser) navigate('/search-stores', { replace: true })
+    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        navigate('/search-stores', { replace: true })
+      }
+    })
+    return unsub
   }, [navigate])
 
   /* ── Tab switch animation ── */
