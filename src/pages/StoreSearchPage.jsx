@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Store, ArrowRight, ShoppingBag } from 'lucide-react';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
+import { Search, Store, ArrowRight, ShoppingBag, LogOut, Zap } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://customerverse.onrender.com';
 
@@ -8,7 +10,20 @@ export default function StoreSearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  // Track auth state for avatar + logout
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => setUser(u));
+    return unsub;
+  }, []);
+
+  // Sign out handler
+  const handleLogout = async () => {
+    await signOut(auth);
+    navigate('/', { replace: true });
+  };
 
   // Fetch all/matching stores
   const fetchStores = async (query = '') => {
@@ -33,8 +48,52 @@ export default function StoreSearchPage() {
     fetchStores(searchQuery);
   };
 
+  // Avatar helper
+  const avatar = user?.photoURL ? (
+    <img src={user.photoURL} alt="avatar" referrerPolicy="no-referrer"
+      className="w-9 h-9 rounded-full border-2 border-cyan-500 object-cover" />
+  ) : (
+    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center text-white font-bold text-sm">
+      {(user?.displayName || user?.email || 'U')[0].toUpperCase()}
+    </div>
+  );
+
   return (
     <div className="w-full min-h-screen bg-slate-50 text-slate-800 flex flex-col items-center pb-24">
+
+      {/* ── Top Navbar ── */}
+      <nav className="w-full sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center">
+              <Zap size={15} fill="white" className="text-white" />
+            </div>
+            <span className="font-display font-black text-base tracking-tighter text-slate-900">
+              Vendor<span className="text-cyan-600">Verse</span>
+            </span>
+          </div>
+
+          {/* Right: User + Logout */}
+          <div className="flex items-center gap-4">
+            {user && (
+              <>
+                {avatar}
+                <span className="hidden md:block text-sm font-semibold text-slate-700 max-w-[140px] truncate">
+                  {user.displayName || user.email?.split('@')[0]}
+                </span>
+              </>
+            )}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 hover:text-red-500 hover:bg-red-50 text-xs font-bold tracking-widest uppercase transition-all"
+            >
+              <LogOut size={15} />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
+          </div>
+        </div>
+      </nav>
       {/* Premium Hero Section */}
       <div className="w-full max-w-7xl px-6 pt-24 pb-16 text-center flex flex-col items-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 border border-cyan-100 text-cyan-700 text-xs font-semibold uppercase tracking-widest mb-6">
