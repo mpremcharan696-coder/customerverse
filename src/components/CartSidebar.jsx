@@ -39,7 +39,7 @@ export default function CartSidebar({ isOpen, onClose }) {
       key: 'rzp_test_SvDvHMGKzW6hw7', // Active Razorpay Sandbox Test Key ID
       amount: Math.round(totalAmount * 100), // Razorpay expects amount in paise/cents
       currency: 'INR',
-      name: 'VendorVerse E-Commerce',
+      name: 'CustomerVerse E-Commerce',
       description: 'Cart Purchase Transaction',
       handler: async function (response) {
         // Success checkout webhook API transaction
@@ -79,7 +79,7 @@ export default function CartSidebar({ isOpen, onClose }) {
       },
       prefill: {
         name: 'Guest Buyer',
-        email: 'buyer@vendorverse.com',
+        email: 'buyer@customerverse.com',
         contact: '9999999999'
       },
       theme: {

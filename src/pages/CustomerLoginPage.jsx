@@ -357,7 +357,7 @@ export default function CustomerLoginPage() {
           </span>
         </div>
         <h1 className="font-display font-black text-4xl md:text-5xl tracking-tighter text-slate-900 leading-tight">
-          Welcome to <span className="text-cyan-600">VendorVerse</span>
+          Welcome to <span className="text-cyan-600">CustomerVerse</span>
         </h1>
         <p className="text-slate-500 mt-3 text-sm font-medium">
           Sign in to discover products from local vendors
@@ -563,7 +563,7 @@ export default function CustomerLoginPage() {
         {/* Footer */}
         <div className="px-8 pb-6 text-center">
           <p className="text-[10px] text-slate-400 leading-relaxed">
-            By continuing you agree to VendorVerse's{' '}
+            By continuing you agree to CustomerVerse's{' '}
             <span className="underline cursor-pointer hover:text-slate-600">Terms of Service</span>
             {' '}and{' '}
             <span className="underline cursor-pointer hover:text-slate-600">Privacy Policy</span>

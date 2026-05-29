@@ -70,7 +70,7 @@ export default function StoreSearchPage() {
               <Zap size={15} fill="white" className="text-white" />
             </div>
             <span className="font-display font-black text-base tracking-tighter text-slate-900">
-              Vendor<span className="text-cyan-600">Verse</span>
+              Customer<span className="text-cyan-600">Verse</span>
             </span>
           </div>
 

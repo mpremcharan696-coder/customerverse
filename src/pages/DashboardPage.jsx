@@ -145,7 +145,7 @@ export default function DashboardPage() {
             <Zap size={16} fill="white" className="text-white" />
           </div>
           <span className="font-display font-black text-base tracking-tighter">
-            Vendor<span className="text-cyan-400">Verse</span>
+            Customer<span className="text-cyan-400">Verse</span>
           </span>
         </div>
 
