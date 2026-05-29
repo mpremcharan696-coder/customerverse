@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import { Search, Store, ArrowRight, ShoppingBag, LogOut, Zap } from 'lucide-react';
+import RotatingText from '../components/RotatingText';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://customerverse.onrender.com';
 
@@ -96,8 +97,23 @@ export default function StoreSearchPage() {
       </nav>
       {/* Premium Hero Section */}
       <div className="w-full max-w-7xl px-6 pt-24 pb-16 text-center flex flex-col items-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 border border-cyan-100 text-cyan-700 text-xs font-semibold uppercase tracking-widest mb-6">
-          <ShoppingBag size={14} /> Multi-Vendor Local Marketplace
+        <div className="inline-flex items-center gap-3.5 px-7 py-3.5 rounded-full bg-cyan-50/85 border border-cyan-100/90 shadow-lg mb-8">
+          <ShoppingBag size={28} className="text-slate-900" />
+          <span className="font-display font-black text-3xl tracking-tight text-slate-900 flex items-center">
+            <RotatingText
+              texts={['Multi', 'Deli', 'Vendor', 'Customer', 'Distributor']}
+              mainClassName="text-slate-900 overflow-hidden py-0.5 justify-center rounded-lg"
+              staggerFrom="last"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "-120%" }}
+              staggerDuration={0.025}
+              splitLevelClassName="overflow-hidden pb-0.5"
+              transition={{ type: "spring", damping: 30, stiffness: 400 }}
+              rotationInterval={2000}
+            />
+            <span className="text-cyan-600">Verse</span>
+          </span>
         </div>
         <h1 className="font-display font-black text-4xl md:text-6xl tracking-tight text-slate-900 max-w-3xl leading-[1.1] mb-6">
           Everything You Need, From <span className="bg-gradient-to-r from-cyan-600 to-indigo-600 bg-clip-text text-transparent">Local Vendors</span>
