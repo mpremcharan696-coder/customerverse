@@ -44,19 +44,20 @@ function AuthGuard({ children }) {
 export default function App() {
   const location = useLocation()
 
-  // Show 3D canvas backdrop on login page for visual flair
-  const showCanvas = ['/login'].includes(location.pathname)
+  // Show 3D background on landing + login pages
+  const showCanvas = ['/', '/login'].includes(location.pathname)
+  const isPortals  = location.pathname === '/login'
 
   return (
     <div className="relative w-full min-h-screen overflow-x-hidden bg-white">
-      {/* 3D background on login page */}
-      {showCanvas && <CanvasContainer isPortals={true} />}
+      {/* 3D background */}
+      {showCanvas && <CanvasContainer isPortals={isPortals} />}
 
       {/* Page Routing */}
       <div className="relative z-10 w-full min-h-screen">
         <Routes>
-          {/* Root redirects to login — users must authenticate first */}
-          <Route path="/"               element={<Navigate to="/login" replace />} />
+          {/* Public: Landing page — "Get Started" button goes to /login */}
+          <Route path="/"               element={<LandingPage />} />
           <Route path="/portals"        element={<Navigate to="/login" replace />} />
           <Route path="/login"          element={<CustomerLoginPage />} />
           
