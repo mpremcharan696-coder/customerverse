@@ -4,6 +4,8 @@ import { ArrowLeft, Store, PackageOpen, ShoppingCart, Tag, Check, AlertCircle } 
 import { useCart } from '../CartContext';
 import CartSidebar from '../components/CartSidebar';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://customerverse.onrender.com';
+
 export default function StorefrontPage() {
   const { storeId } = useParams();
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ export default function StorefrontPage() {
     const fetchStoreData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/api/stores/${storeId}/products`);
+        const response = await fetch(`${API_BASE_URL}/api/stores/${storeId}/products`);
         if (!response.ok) {
           throw new Error('Store storefront products failed to load.');
         }

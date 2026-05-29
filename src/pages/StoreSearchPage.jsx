@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Store, ArrowRight, ShoppingBag } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://customerverse.onrender.com';
+
 export default function StoreSearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [stores, setStores] = useState([]);
@@ -12,7 +14,7 @@ export default function StoreSearchPage() {
   const fetchStores = async (query = '') => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/search-stores?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`${API_BASE_URL}/api/search-stores?q=${encodeURIComponent(query)}`);
       const data = await response.json();
       setStores(data);
     } catch (error) {
