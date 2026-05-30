@@ -5,7 +5,6 @@ import { auth } from '../firebase';
 import { Search, Store, ArrowRight, ShoppingBag, LogOut, Zap } from 'lucide-react';
 import RotatingText from '../components/RotatingText';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://customerverse.onrender.com';
 
 export default function StoreSearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,7 +29,7 @@ export default function StoreSearchPage() {
   const fetchStores = async (query = '') => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/search-stores?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`/api/search-stores?q=${encodeURIComponent(query)}`);
       const data = await response.json();
       setStores(data);
     } catch (error) {

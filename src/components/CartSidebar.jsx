@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { X, Trash2, Plus, Minus, CreditCard, ShieldCheck } from 'lucide-react';
 import { useCart } from '../CartContext';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://customerverse.onrender.com';
-
 export default function CartSidebar({ isOpen, onClose }) {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
@@ -56,7 +54,7 @@ export default function CartSidebar({ isOpen, onClose }) {
             }))
           };
 
-          const checkRes = await fetch(`${API_BASE_URL}/api/ecom/checkout`, {
+          const checkRes = await fetch('/api/ecom/checkout', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
